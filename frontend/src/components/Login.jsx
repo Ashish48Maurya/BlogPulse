@@ -1,36 +1,82 @@
-import React from 'react';
-import Navbar from './Navbar';
+import React,{useState} from 'react';
+import { useAuth } from '../store/auth';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-    return (
-        <>
-            <div className="container">
-                <div class="login-container">
-                    <h2>Login</h2>
-                    <form>
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="username"
-                                placeholder="Enter your username"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                id="password"
-                                placeholder="Enter your password"
-                            />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </form>
-                </div>
+  const navigate = useNavigate();
+
+  const notifyA = (msg) => toast.error(msg);
+  const notifyB = (msg) => toast.success(msg);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { storeTokenInLS } = useAuth();
+
+  const postData = async (event) => {
+    event.preventDefault();
+
+    if (!password || !email) {
+      return notifyA("All Fields are Required!!!")
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/signin", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      })
+      if (response.status === 200) {
+        const res_data = await response.json();
+        storeTokenInLS(res_data.token);
+        notifyB("Login Successfull");
+        navigate('/');
+      }
+      else {
+        return notifyA("Invalid Credentials!!!")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return (
+    <>
+      <div className="container">
+        <div class="login-container">
+          <h2>Login</h2>
+          <form>
+            <div class="form-group">
+              <label for="username">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="mail"
+                placeholder="Enter your Email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value) }}
+              />
             </div>
-            <style>{`
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value) }}
+              />
+            </div>
+            <button type="submit" class="btn btn-primary" onClick={postData}>Login</button>
+          </form>
+        </div>
+      </div>
+      <style>{`
     .container{
         display:flex;
         justify-content:center;
@@ -96,6 +142,6 @@ export default function Login() {
         }
       }
     `}</style>
-        </>
-    );
+    </>
+  );
 }

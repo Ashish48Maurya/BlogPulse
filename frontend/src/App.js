@@ -6,7 +6,7 @@ import Home from './components/Home';
 import Navbar from './components/Navbar';
 import CreateBlog from './components/CreateBlog';
 import Posts from './components/Posts';
-
+import PrivateRoute from './PrivateRoute/privateRoute';
 function App() {
   return (
     <div>
@@ -24,21 +24,19 @@ function App() {
         />
         <Route
           exact
-          path="/posts"
-          element={<Posts />}
-        />
-        <Route
-          exact
-          path="/post"
-          element={<CreateBlog/>}
-        />
-        <Route
-          exact
           path="/"
           element={<Home />}
         />
+
+        <Route
+          path="/private/"
+          element={<PrivateRoute />}
+        >
+          <Route path="posts" element={<Posts />} />
+          <Route path="post" element={<CreateBlog />} />
+        </Route>
       </Routes>
-    </div>
+    </div >
   );
 }
 

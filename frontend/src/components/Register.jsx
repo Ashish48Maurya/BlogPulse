@@ -1,45 +1,96 @@
-import React from 'react';
-import Navbar from './Navbar';
-
+import React,{useState} from 'react';
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import { useAuth } from '../store/auth';
 export default function Register() {
-    return (
-        <>
-            <div className="container">
-                <div class="register-container">
-                    <h2>Register</h2>
-                    <form>
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="username"
-                                placeholder="Enter your username"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input
-                                type="email"
-                                class="form-control"
-                                id="email"
-                                placeholder="Enter your email"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                id="password"
-                                placeholder="Enter your password"
-                            />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
-                    </form>
-                </div>
+  const navigate = useNavigate();
+  const {storeTokenInLS} = useAuth();
+  const notifyA = (msg) => toast.error(msg);
+  const notifyB = (msg) => toast.success(msg);
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
+
+  const postData = async (event) => {
+    event.preventDefault();
+    if (!username || !password || !email) {
+        return notifyA("All Fields Are Required!!!");
+    }
+
+    try {
+        const response = await fetch("http://localhost:8000/register", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    email: email,
+                }),
+        });
+
+        if (response.status === 200) {
+            const res_data = await response.json();
+            console.log("response from server ", res_data);
+            storeTokenInLS(res_data.token);
+            notifyB("Registration Successfull !!!");
+            navigate("/login");
+        } else {
+            return notifyA("Username Already Exist!!!");
+        }
+    }
+    catch (error) {
+        notifyA(error);
+    }
+}
+
+
+  return (
+    <>
+      <div className="container">
+        <div class="register-container">
+          <h2>Register</h2>
+          <form>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e)=>{setUserName(e.target.value)}}
+              />
             </div>
-            <style>{`
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e)=>{setEmail(e.target.value)}}
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e)=>{setPassword(e.target.value)}}
+              />
+            </div>
+            <button type="submit" onClick={postData} class="btn btn-primary">Register</button>
+          </form>
+        </div>
+      </div>
+      <style>{`
             .container{
                 display:flex;
                 justify-content:center;
@@ -105,6 +156,6 @@ export default function Register() {
                 }
               }
             `}</style>
-        </>
-    );
+    </>
+  );
 }

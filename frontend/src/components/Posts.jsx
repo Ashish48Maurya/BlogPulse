@@ -27,7 +27,7 @@ export default function Posts() {
         }
 
         .name {
-          font - style: italic;
+          font-style: italic;
         font-weight: bolder;
         color: coral
     }
