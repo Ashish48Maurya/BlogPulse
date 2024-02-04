@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../store/auth';
 
 export default function Navbar() {
+    
     const navigate = useNavigate();
     const { isLoggedIn, LogoutUser, user } = useAuth();
     return (
@@ -22,10 +23,10 @@ export default function Navbar() {
 
 
                         <li className="nav-item" >
-                            <Link className="nav-link active" aria-current="page" to='/post'>CreatePost</Link>
+                            <Link className="nav-link active" aria-current="page" to='/private/post'>CreatePost</Link>
                         </li>
                         <li className="nav-item" >
-                            <Link className="nav-link active" aria-current="page" to='/posts'>Posts</Link>
+                            <Link className="nav-link active" aria-current="page" to='/private/posts'>Posts</Link>
                         </li>
                     </ul>
                     <form className="d-flex fs-6 fw-medium ms-auto">

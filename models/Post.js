@@ -1,7 +1,19 @@
-import React from 'react'
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-export default function Post() {
-  return (
-    <div>Post</div>
-  )
-}
+const postSchema = new Schema({
+    title: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    image:{
+        type:String,
+        required: true,
+    }
+});
+const Post = mongoose.model("post", postSchema);
+module.exports = Post;
