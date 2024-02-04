@@ -2,8 +2,6 @@ require('dotenv').config()
 const User = require('../models/User')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 
 
 exports.signin = async (req, res) => {
@@ -89,14 +87,3 @@ exports.user = async (req, res) => {
   }
 }
 
-
-exports.postBlog = upload.single('file'), async (req, res) => {
-  try {
-    // const file = req.file;
-    // return res.status(200).json({ message: 'File uploaded successfully', file });
-    return res.json("ok");
-  } catch (error) {
-    console.error("Error:",error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
-};

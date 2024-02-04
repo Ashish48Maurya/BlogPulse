@@ -15,7 +15,7 @@ const CreateBlog = () => {
       data.set('title', title);
       data.set('description', description);
       data.append('file', file[0]);
-      const response = await fetch("http://localhost:8000/postBlog", {
+      const response = await fetch("http://localhost:8000/post", {
         method: "post",
         body: data
       })
@@ -41,6 +41,7 @@ const CreateBlog = () => {
                 <input
                   type='file'
                   className="form-control"
+                  name='file'
                   onChange={(e) => setfile(e.target.files)}
                 />
               </div>
