@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useAuth } from '../store/auth';
 
 const CreateBlog = () => {
   const notifyA = (msg) => toast.error(msg);
   const notifyB = (msg) => toast.success(msg);
   const [file, setfile] = useState([]);
+  const [token,setToken] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-
+  useEffect(()=>{
+    setToken(localStorage.getItem("token"));
+  },)
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -16,8 +20,11 @@ const CreateBlog = () => {
       data.set('description', description);
       data.append('file', file[0]);
       const response = await fetch("http://localhost:8000/post", {
-        method: "post",
-        body: data
+        method: "POST",  
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+      body: data
       })
       if (response.status === 200) {
         const res_data = await response.json();

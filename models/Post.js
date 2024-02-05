@@ -13,7 +13,11 @@ const postSchema = new Schema({
     image:{
         type:String,
         required: true,
-    }
+    },
+    timestamps: {
+        type: Date,
+        default: Date.now,
+    },
 });
 const Post = mongoose.model("post", postSchema);
 module.exports = Post;

@@ -11,15 +11,15 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-    email:{
-        type:String,
+    email: {
+        type: String,
         required: true,
         unique: true,
-    }
-    // posts: [{
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'payment',
-    // }],
+    },
+    posts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'post',
+    }],
 });
 
 userSchema.methods.generateToken = async function () {
