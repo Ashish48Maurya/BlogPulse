@@ -12,23 +12,26 @@ const fs = require('fs')
 const Post = require('./models/Post');
 const authMiddleware = require('./middleware/auth');
 
+
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(routes);
+app.use('/uploads', express.static(__dirname + '/uploads'))
 
 app.post('/post', authMiddleware, upload.single('file'), async (req, res) => {
+
   const { originalname, path } = req.file;
   const parts = originalname.split('.');
   const ext = parts[parts.length - 1];
   const newPath = path + '.' + ext;
 
   fs.renameSync(path, newPath);
-
   const { title, description } = req.body;
   try {
     const user = req.User;
+    const username = req.User.username;
     if (!title || !description) {
       return res.status(422).json({ message: 'All Fields are Required!' });
     }
@@ -36,6 +39,8 @@ app.post('/post', authMiddleware, upload.single('file'), async (req, res) => {
       title,
       description,
       image: newPath,
+      author: username,
+      user: user
     });
 
     const postData = await post.save();

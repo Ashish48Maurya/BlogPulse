@@ -1,29 +1,75 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../store/auth';
 
 export default function Posts() {
+  const { token } = useAuth();
+  const [posts, setPosts] = useState([]);
+
+  const getData = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/getUserPosts", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (response.status === 200) {
+        const res_data = await response.json();
+        console.log(res_data.userPost);
+        setPosts(res_data.userPost || []);
+      } else {
+        alert("Invalid Credentials!!!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
+    return date.toLocaleString('en-US', options);
+  }
+
+  const getPosts = async(req,res)=>{
+    console.log("HELLO")
+  }
+
+  useEffect(async () => {
+    await getData();
+    getPosts();
+  }, []);
+
   return (
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-10 col-12 flex">
-          <img src="error.png" alt="Img" />
-        </div>
-        <div class="col-lg-6 col-md-5 right mt-2 col-12 mb-3">
-          <h2 className='text-warning'>Heading</h2>
-          <div class="flex">
-            <div class="time">Time and Date</div>
-            <div class="name">Name of Author</div>
+    <>
+{posts.length > 0 ? (
+        posts.map((ele) => (
+          <div className="container" key={ele._id}>
+            <div className="row">
+              <div className="col-lg-6 col-md-6 col-sm-10 col-12 flex">
+                <img className="mx-auto my-auto" src={`http://localhost:8000/${ele.image}`} alt="Img" />
+              </div>
+              <div className="col-lg-6 col-md-5 right mt-2 col-12 mb-3">
+                <h2 className="text-warning">{ele.title}</h2>
+                <div className="flex">
+                  <div className="time">{formatTimestamp(ele.timestamps)}</div>
+                  <button>Edit</button>
+                </div>
+                <p>${ele.description.slice(0, 500) + "....."}</p>
+              </div>
+            </div>
           </div>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut quod explicabo repellendus officiis
-            provident hic! Eum doloremque veniam natus sed. Officiis impedit tenetur laboriosam quam numquam at,
-            placeat recusandae accusamus quod hic fugit similique quia obcaecati ab dolore? Dicta illo aut
-            placeat eaque pariatur vero harum quidem minima repellat dolor?</p>
-        </div>
-      </div>
+        ))
+      ) : (
+        <p>Loading...</p>
+      )}
       <style>
         {`
         img {
-          max - height: 300px;
-        width:70%;
+          max - height: 250px;
+        width:60%;
         }
 
         .name {
@@ -80,6 +126,6 @@ export default function Posts() {
       `}
 
       </style>
-    </div>
-  )
+    </>
+  );
 }

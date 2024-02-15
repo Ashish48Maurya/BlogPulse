@@ -2,6 +2,7 @@ require('dotenv').config()
 const User = require('../models/User')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
+const Post = require('../models/Post')
 
 
 exports.signin = async (req, res) => {
@@ -87,3 +88,24 @@ exports.user = async (req, res) => {
   }
 }
 
+exports.getUserPosts = async(req,res)=>{
+  try {
+    const userData = req.User;
+    
+    const userPost = await Post.find({ user: userData._id }).sort({ timestamps: -1 });
+
+    res.status(200).json({userPost});
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+exports.home = async (req, res) => {
+  try {
+    const posts = await Post.find({});
+    res.status(200).json({ posts })
+  } catch (error) {
+    console.log(error)
+  }
+}

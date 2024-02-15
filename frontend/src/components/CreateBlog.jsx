@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../store/auth';
+import { useNavigate } from 'react-router-dom';
 
 const CreateBlog = () => {
   const notifyA = (msg) => toast.error(msg);
   const notifyB = (msg) => toast.success(msg);
   const [file, setfile] = useState([]);
+  const navigate = useNavigate();
   const [token,setToken] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -27,10 +29,11 @@ const CreateBlog = () => {
       body: data
       })
       if (response.status === 200) {
-        const res_data = await response.json();
-        console.log(res_data);
+        alert("post Added");
+        navigate('/')
+
       } else {
-        return notifyA("Post Added");
+       alert("Error");
       }
     } catch (err) {
       console.log("Error:",err);
